@@ -1,16 +1,25 @@
+from functools import cache
+
+@cache
+def countRecords(n, conseqLates, absences):
+    if n==0:
+        return 1
+
+    count = 0
+
+    # P
+    count += countRecords(n-1, 0, absences)
+
+    # A
+    if absences < 1:
+        count += countRecords(n-1, 0, absences+1)
+
+    # L
+    if conseqLates < 2:
+        count += countRecords(n-1, conseqLates+1, absences)
+
+    return count % (pow(10,9)+7)
+
 class Solution:
     def checkRecord(self, n: int) -> int:
-        mod = 10**9 + 7
-        dp=[[[-1]*3 for _ in range(2)] for _ in range(n+1)]
-        def f(i, absent, late):
-            if absent>=2 or late>=3: return 0
-            if i==0: return 1
-            if dp[i][absent][late]!=-1:
-                return dp[i][absent][late]
-            ans=f(i-1, absent, 0)
-            ans+=f(i-1, absent, late+1)
-            ans+=f(i-1, absent+1, 0)
-            dp[i][absent][late]=ans%mod
-            return dp[i][absent][late]
-        return f(n, 0, 0)
-            
+        return countRecords(n,0,0)
